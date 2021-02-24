@@ -1,0 +1,14 @@
+{
+	"singleQuote": true,
+	"printWidth": 80,
+	"useTabs": true,
+    "prettier.arrowParens": "always",
+	"editor.tabCompletion": "on",
+	"endOfLine": "auto",
+	"bracketSpacing": false,
+	"arrowParens": "avoid",
+	"htmlWhitespaceSensitivity": "strict",
+	"eslintConfig": {
+		"extends": "react-app"
+	}
+}
