@@ -1,4 +1,4 @@
-import {createContext, ReactNode, useState} from 'react';
+import {createContext, ReactNode, useEffect, useState} from 'react';
 import challenges from './../challenges.json';
 
 interface Challenge {
@@ -7,7 +7,7 @@ interface Challenge {
 	amount: number;
 }
 
-interface ChallengeContextData {
+interface ChallengeData {
 	level: number;
 	experience: number;
 	completedChallenges: number;
@@ -16,13 +16,14 @@ interface ChallengeContextData {
 	activeChallenge: Challenge;
 	resetChallenge: () => void;
 	nextLvlExp: number;
+	completeChallenge: () => void;
 }
 
 interface challengeProps {
 	children: ReactNode;
 }
 
-export const ChallengesContext = createContext({} as ChallengeContextData);
+export const ChallengesContext = createContext({} as ChallengeData);
 
 export const ChallengesProvider = ({children}: challengeProps) => {
 	const [level, setLevel] = useState(1);
@@ -32,17 +33,45 @@ export const ChallengesProvider = ({children}: challengeProps) => {
 
 	const nextLvlExp = Math.pow((level + 1) * 4, 2);
 
+	useEffect(() => {
+		Notification.requestPermission();
+	}, []);
+
 	const levelUp = () => {
 		setLevel(level + 1);
 	};
 
 	const startNewChallenge = () => {
 		const randomIndex = Math.floor(Math.random() * challenges.length);
-		setActiveChallenge(challenges[randomIndex]);
+		const challenge = challenges[randomIndex];
+		setActiveChallenge(challenge);
+
+		new Audio('/notification.mp3').play();
+		if (Notification.permission === 'granted') {
+			new Notification('Novo desafio 🤳', {
+				body: `Valendo ${challenge.amount}xp!`,
+			});
+		}
 	};
 
 	const resetChallenge = () => {
 		setActiveChallenge(null);
+	};
+
+	const completeChallenge = () => {
+		if (!activeChallenge) return;
+
+		const {amount} = activeChallenge;
+		let finalExperience = experience + amount;
+
+		if (finalExperience >= nextLvlExp) {
+			finalExperience -= nextLvlExp;
+			levelUp();
+		}
+
+		setExperience(finalExperience);
+		setActiveChallenge(null);
+		setCompletedChallenges(completedChallenges + 1);
 	};
 
 	return (
@@ -56,6 +85,7 @@ export const ChallengesProvider = ({children}: challengeProps) => {
 				activeChallenge,
 				resetChallenge,
 				nextLvlExp,
+				completeChallenge,
 			}}
 		>
 			{children}
