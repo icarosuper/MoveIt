@@ -2,7 +2,7 @@ import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {ChallengesContext} from './ChallengeContexts';
 
 let timer: NodeJS.Timeout;
-const countDownTime = 5;
+const countDownTime = 10 * 60;
 
 interface CountdownData {
 	minutes: number;
