@@ -2,7 +2,7 @@ import styles from './../styles/components/Countdown.module.css';
 import {useContext} from 'react';
 import {CountdownContext} from '../contexts/CountdownContext';
 
-export function Countdown() {
+const Countdown = () => {
 	const {
 		minutes,
 		seconds,
@@ -56,3 +56,5 @@ export function Countdown() {
 		</>
 	);
 }
+
+export default Countdown;

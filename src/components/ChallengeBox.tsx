@@ -3,7 +3,7 @@ import {useContext} from 'react';
 import {ChallengesContext} from '../contexts/ChallengeContexts';
 import {CountdownContext} from '../contexts/CountdownContext';
 
-export function ChallengeBox() {
+const ChallengeBox = () => {
 	const {activeChallenge, resetChallenge, completeChallenge} = useContext(
 		ChallengesContext
 	);
@@ -54,3 +54,5 @@ export function ChallengeBox() {
 		</div>
 	);
 }
+
+export default ChallengeBox;

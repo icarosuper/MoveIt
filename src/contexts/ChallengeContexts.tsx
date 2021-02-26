@@ -1,5 +1,7 @@
 import {createContext, ReactNode, useEffect, useState} from 'react';
 import challenges from './../challenges.json';
+import Cookies from 'js-cookie';
+import {LevelUpModal} from '../components/LevelUpModal';
 
 interface Challenge {
 	type: 'body' | 'eye';
@@ -17,19 +19,26 @@ interface ChallengeData {
 	resetChallenge: () => void;
 	nextLvlExp: number;
 	completeChallenge: () => void;
+	closeLvlUpModal: () => void;
 }
 
 interface challengeProps {
 	children: ReactNode;
+	level: number;
+	experience: number;
+	completedChallenges: number;
 }
 
 export const ChallengesContext = createContext({} as ChallengeData);
 
-export const ChallengesProvider = ({children}: challengeProps) => {
-	const [level, setLevel] = useState(1);
-	const [experience, setExperience] = useState(0);
-	const [completedChallenges, setCompletedChallenges] = useState(0);
+export const ChallengesProvider = ({children, ...user}: challengeProps) => {
+	const [level, setLevel] = useState(user.level ?? 1);
+	const [experience, setExperience] = useState(user.experience ?? 0);
+	const [completedChallenges, setCompletedChallenges] = useState(
+		user.completedChallenges ?? 0
+	);
 	const [activeChallenge, setActiveChallenge] = useState(null);
+	const [isLvlUpModalOpen, setIsLvlUpModalOpen] = useState(false);
 
 	const nextLvlExp = Math.pow((level + 1) * 4, 2);
 
@@ -37,9 +46,18 @@ export const ChallengesProvider = ({children}: challengeProps) => {
 		Notification.requestPermission();
 	}, []);
 
+	useEffect(() => {
+		Cookies.set('level', String(level));
+		Cookies.set('experience', String(experience));
+		Cookies.set('completedChallenges', String(completedChallenges));
+	}, [level, experience, completedChallenges]);
+
 	const levelUp = () => {
 		setLevel(level + 1);
+		setIsLvlUpModalOpen(true);
 	};
+
+	const closeLvlUpModal = () => setIsLvlUpModalOpen(false);
 
 	const startNewChallenge = () => {
 		const randomIndex = Math.floor(Math.random() * challenges.length);
@@ -86,9 +104,11 @@ export const ChallengesProvider = ({children}: challengeProps) => {
 				resetChallenge,
 				nextLvlExp,
 				completeChallenge,
+				closeLvlUpModal,
 			}}
 		>
 			{children}
+			{isLvlUpModalOpen && <LevelUpModal />}
 		</ChallengesContext.Provider>
 	);
 };

@@ -1,12 +1,7 @@
-import {ChallengesProvider} from '../contexts/ChallengeContexts';
 import '../styles/global.css';
 
-function MyApp({Component, pageProps}) {
-	return (
-		<ChallengesProvider>
-			<Component {...pageProps} />
-		</ChallengesProvider>
-	);
-}
+const MyApp = ({Component, pageProps}) => {
+	return <Component {...pageProps} />;
+};
 
 export default MyApp;
